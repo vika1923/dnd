@@ -1,39 +1,26 @@
 from mlx_lm import load, generate
-import json
-import os
-from datetime import datetime
 
-model, tokenizer = load("Qwen/Qwen3-32B-MLX-4bit")
-messages = [{"role": "user", "content": "Write a story about Einstein"}]
-prompt = tokenizer.apply_chat_template(
-    messages, add_generation_prompt=True
-)
+MODEL_NAME = "Qwen/Qwen3-32B-MLX-4bit"
 
-text = generate(model, tokenizer, prompt=prompt, verbose=True)
+# HISTORY_PATH = "chat_history.json"
+# GAME_STATE_PATH = "game_state.json"
 
-assistant_message = {"role": "assistant", "content": text}
-messages.append(assistant_message)
+MAX_TOKENS = 500
 
-# Persist chat history to a JSON file. Each run appends a new entry with a timestamp.
-history_path = "chat_history.json"
-entry = {
-    "timestamp": datetime.utcnow().isoformat() + "Z",
-    "messages": messages,
-}
+model, tokenizer = load(MODEL_NAME)
 
-# Load existing history (if any) then append and save back.
-history = []
-if os.path.exists(history_path):
-    try:
-        with open(history_path, "r", encoding="utf-8") as f:
-            history = json.load(f)
-    except Exception:
-        # If the file is corrupted or unreadable, start fresh.
-        history = []
+def talk_with_agent(conversation_history, new_message, max_tokens=MAX_TOKENS):
+    messages = list(conversation_history) + [{"role": "user", "content": new_message}]
+    prompt = tokenizer.apply_chat_template(
+        messages, add_generation_prompt=True, enable_thinking=False
+    )
+    response = generate(model, tokenizer, prompt=prompt, max_tokens=max_tokens)
+    add_item_to_history("assistant", response, conversation_history)
+    return response
 
-history.append(entry)
+def add_item_to_history(role, content, prev_history):
+    return prev_history.append({"role": role, "content": content})
 
-with open(history_path, "w", encoding="utf-8") as f:
-    json.dump(history, f, ensure_ascii=False, indent=2)
-
-print(f"Chat saved to {history_path}")
+if __name__ == "__main__":
+    text = talk_with_agent([], "We are playing DnD")
+    print(text)
