@@ -1,27 +1,25 @@
 import random
 
-def d20():
-    return random.randint(1, 20)
+def roll_dice(count: int, sides: int) -> dict:
+    """Roll one or more D&D dice."""
 
+    valid_sides = (4, 6, 8, 10, 12, 20, 100)
 
-def d12():
-    return random.randint(1, 12)
+    if sides not in valid_sides:
+        raise ValueError(f"Invalid die size: d{sides}")
 
+    if count < 1:
+        raise ValueError("Dice count must be at least 1")
 
-def d10():
-    return random.randint(0, 9)
+    rolls = [
+        random.randint(1, sides)
+        for _ in range(count)
+    ]
 
+    return {
+        "rolls": rolls,
+        "total": sum(rolls),
+    }
 
-def d8():
-    return random.randint(1, 8)
-
-
-def d6():
-    return random.randint(1, 6)
-
-
-def d4():
-    return random.randint(1, 4)
-
-def d_percent():
-    return random.randint(0, 90) + d10()
+if __name__=="__main__":
+    print(roll_dice(100))

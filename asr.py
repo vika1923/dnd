@@ -1,6 +1,6 @@
 import whisper
 
-model = whisper.load_model("large-v3-turbo")
+model = whisper.load_model("large-v3")
 
 
 def transcribe(audio_path):
@@ -9,4 +9,5 @@ def transcribe(audio_path):
 
 
 if __name__ == "__main__": 
-    print(transcribe("audio/test.mp3"))
+    # print(transcribe("audio/test.mp3"))
+    print(whisper.available_models())
