@@ -22,4 +22,4 @@ def roll_dice(count: int, sides: int) -> dict:
     }
 
 if __name__=="__main__":
-    print(roll_dice(100))
+    print(roll_dice(2, 12))

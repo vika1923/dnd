@@ -183,14 +183,16 @@ def talk_with_agent_thinking_disabled(conversation_history, new_message, max_tok
     ################## JSON WAS PARSED => WE ARE CALLING A PYTHON FUNCTION ##################
     #########################################################################################
 
+    final_messages = list(messages)
+    final_messages.append({"role": "assistant", "content": response})
+
     if decision.get("function" == "dice_roll"):
         arguments = decision.get("arguments", {})
         count = int(arguments.get("count", 1))
         sides = int(arguments.get("sides", 20))
 
         tool_result = roll_dice(count, sides)
-        final_messages = list(messages)
-        final_messages.append({"role": "assistant", "content": response})
+
         final_messages.append({
             "role": "user",
             "content": (

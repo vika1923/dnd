@@ -222,3 +222,5 @@ __marimo__/
 chat_history.json
 game_state.json
 audio/
+from_rulebook/
+character_sheet.json
